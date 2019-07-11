@@ -12,12 +12,14 @@ function bestCharge(barcodesArray){
     itemsStr+=item.name+" x "+item.quantity+" = "+item.price*item.quantity+"元\n"
   }
   itemsStr+="-----------------------------------"
-  var promotionStr='使用优惠：\n'+totalInfoObj.type+"\n-----------------------------------"
+  var promotionStr='\n使用优惠:\n'+totalInfoObj.type+"\n-----------------------------------"
+  if(totalInfoObj.isPromotion){
+    itemsStr +=promotionStr
+  }
   var totalSre='总计：'+totalInfoObj.total+"元\n"+"==================================="
   var receiptStr=`
 ============= 订餐明细 =============
 ${itemsStr}
-${totalInfoObj.isPromotion?promotionStr:""}
 ${totalSre}`
   return receiptStr
 }
@@ -86,7 +88,7 @@ function colculateTotal(cartItemsArray){
 function formatItemObject(barcodesArray){
   var database=loadAllItems()
   var itemQuantity=colculateItemQuantity(barcodesArray)
-  var cartItem=[]
+  var cartItems=[]
   for(let item of Object.keys(itemQuantity)){
       for(let dbItem of database)
       if(dbItem.id==item)
@@ -96,11 +98,11 @@ function formatItemObject(barcodesArray){
           objItem.name=dbItem.name;
           objItem.price=dbItem.price;
           objItem.quantity=itemQuantity[item]
-          cartItem.push(objItem) 
+          cartItems.push(objItem) 
       }
   }
 
-  return cartItem;
+  return cartItems;
 }
 function colculateItemQuantity(barcodesArray){
   var objItem={}
